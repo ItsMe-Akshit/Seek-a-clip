@@ -121,8 +121,8 @@ html[data-theme="light"] .brand .logo-dark{display:block}
 .strip p{font-size:11px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--s-faint);white-space:nowrap}
 /* A quiet marquee: the two rows drift in opposite directions and pause on hover. */
 .plats{position:relative;display:flex;align-items:center;gap:10px;flex:1;min-width:0;overflow:hidden;
-  -webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);
-  mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 18px,#000 calc(100% - 18px),transparent);
+  mask-image:linear-gradient(90deg,transparent,#000 18px,#000 calc(100% - 18px),transparent)}
 .plats-track{display:flex;align-items:center;gap:10px;width:max-content;animation:platsRun 32s linear infinite;will-change:transform}
 .strip-row:nth-child(2) .plats-track{animation-direction:reverse;animation-duration:37s}
 .plats:hover .plats-track,.plats:focus-within .plats-track{animation-play-state:paused}
@@ -554,7 +554,9 @@ details[open] .ans{animation:ansIn .45s cubic-bezier(.2,.7,.2,1) both}
   .clipcard{flex-basis:32%}.clipcard.mid{flex-basis:36%}
   .clipcard figcaption{font-size:11px}.clipcard figcaption b{font-size:12px}
   .reel-note{font-size:11.5px;padding:0 22px}
-  .strip-in{justify-content:center;gap:14px}
+  .strip-in{grid-template-columns:1fr;justify-content:stretch;gap:10px}
+  .strip-row{gap:12px}
+  .strip-row p{min-width:74px}
   .sec{padding:82px 0}
   .sec-head{align-items:flex-start}
   .cell.a,.cell.d{grid-column:span 2}
@@ -706,10 +708,22 @@ details[open] .ans{animation:ansIn .45s cubic-bezier(.2,.7,.2,1) both}
 
     <div class="strip">
       <div class="strip-in">
-        <p>Clips from</p>
-        <div class="plats"><span><i></i>YouTube</span><span><i></i>Twitch</span><span><i></i>Kick</span><span><i></i>Your own files</span></div>
-        <p>Posts to</p>
-        <div class="plats"><span><i></i>YouTube Shorts</span><span><i></i>Instagram Reels</span><span><i></i>TikTok</span></div>
+        <div class="strip-row">
+          <p>Clips from</p>
+          <div class="plats" data-marquee>
+            <div class="plats-track">
+              <span><i></i>YouTube</span><span><i></i>Twitch</span><span><i></i>Kick</span><span><i></i>Your own files</span>
+            </div>
+          </div>
+        </div>
+        <div class="strip-row">
+          <p>Posts to</p>
+          <div class="plats" data-marquee>
+            <div class="plats-track">
+              <span><i></i>YouTube Shorts</span><span><i></i>Instagram Reels</span><span><i></i>TikTok</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -1145,6 +1159,16 @@ fetch("/api/auth/me").then(r => r.json()).then(d => {
       spot.style.top = (e.clientY - r.top) + "px";
     }, { passive: true });
   }
+
+  /* --- the two platform rows, doubled so the loop has no seam ---- */
+  document.querySelectorAll("[data-marquee] .plats-track").forEach((track) => {
+    const copies = Array.prototype.slice.call(track.children).map((node) => {
+      const copy = node.cloneNode(true);
+      copy.setAttribute("aria-hidden", "true");
+      return copy;
+    });
+    copies.forEach((copy) => track.appendChild(copy));
+  });
 
   /* --- numbers that count up the first time you see them ---------- */
   document.querySelectorAll("[data-count]").forEach((el) => {
