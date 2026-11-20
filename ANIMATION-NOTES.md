@@ -299,9 +299,12 @@ $env:PATH = "C:\seekaclip-tools\ffmpeg\ffmpeg-9.0.2-essentials_build\bin;" + $en
 ```
 
 ```powershell
-.\.venv\Scripts\python.exe C:\Users\itsme\AppData\Local\Temp\opencode\qa_captions.py
-.\.venv\Scripts\python.exe C:\Users\itsme\AppData\Local\Temp\opencode\qa_interact.py
+.\.venv\Scripts\python.exe tests\qa\landing_visual.py
+.\.venv\Scripts\python.exe tests\qa\landing_interact.py
 ```
+
+Both read `QA_BASE`, `QA_OUT` and `QA_CHANNEL`; see `tests/qa/README.md` for the
+defaults and for the one-time Playwright install.
 
 ## 6. Known limits
 
