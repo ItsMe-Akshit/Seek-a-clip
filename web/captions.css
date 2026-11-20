@@ -1,0 +1,403 @@
+/* ==========================================================================
+   Seek-a-clip — Results previews + Caption & Text Effects Studio
+   --------------------------------------------------------------------------
+   Everything here is additive. It only styles the new `#results` and
+   `#captions` sections, and it always uses the existing Obsidian Violet
+   tokens (--s-*). No existing selector is redefined.
+
+   Motion rules used throughout:
+     • animate transform / opacity first, filter and background second
+     • every keyframe is short and loops on one element only
+     • `prefers-reduced-motion` turns all of it into a clean static frame
+     • gallery previews only run while the card is hovered, focused, tapped
+       or (on touch screens) closest to the middle of the viewport
+   ========================================================================== */
+
+/* ---------------------------------------------------------------- results */
+.res-sec{padding-top:0}
+.res-video:focus-visible,.res-play:focus-visible,.res-expand:focus-visible,
+.ba-handle:focus-visible,.cap-card:focus-visible,.cap-star:focus-visible,
+.cap-tab:focus-visible,.cap-font:focus-visible,.cap-chip:focus-visible{
+  outline:2px solid var(--s-accent2);outline-offset:3px
+}
+.res-video .poster{background:linear-gradient(160deg,#151022,#08070D)}
+.res-dialog[open]{animation:resDlgIn .28s cubic-bezier(.2,.7,.2,1) both}
+@keyframes resDlgIn{from{opacity:0;transform:translateY(12px) scale(.985)}to{opacity:1;transform:none}}
+.res-dialog video{aspect-ratio:16/9;object-fit:contain}
+.res-video.tall .res-dur{left:11px;top:11px}
+.res-video.tall .res-expand{right:10px;top:10px}
+.res-info b{font-size:13.5px}
+.res-note a{color:var(--s-deep);text-decoration:none;border-bottom:1px solid color-mix(in srgb,var(--s-deep) 45%,transparent)}
+.res-note a:hover{color:var(--s-text)}
+
+/* before / after slider ------------------------------------------------ */
+.ba-handle{outline-offset:6px}
+.ba:focus-within{box-shadow:var(--s-shadow-lg),0 0 0 2px var(--s-accent)}
+
+/* ------------------------------------------------- caption studio shell */
+.cap-sec{position:relative;z-index:2}
+.cap-top{display:flex;align-items:flex-end;justify-content:space-between;gap:26px;flex-wrap:wrap}
+
+.cap-toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:34px}
+.cap-tabs{display:flex;align-items:center;gap:6px;overflow-x:auto;scrollbar-width:none;padding:4px;border:1px solid var(--s-border);border-radius:14px;background:var(--s-card);max-width:100%}
+.cap-tabs::-webkit-scrollbar{display:none}
+.cap-tab{flex:none;height:34px;padding:0 13px;border:0;border-radius:10px;background:transparent;color:var(--s-dim);font-size:12.5px;font-weight:700;letter-spacing:.01em;cursor:pointer;transition:background-color .2s ease,color .2s ease,transform .2s ease}
+.cap-tab:hover{color:var(--s-text);background:var(--s-soft)}
+.cap-tab[aria-pressed="true"]{background:linear-gradient(135deg,var(--s-grad1),var(--s-grad2));color:#fff;box-shadow:0 8px 20px -12px var(--s-glow)}
+.cap-tab:active{transform:scale(.97)}
+
+.cap-search{position:relative;display:flex;align-items:center;gap:8px;height:42px;padding:0 12px;border:1px solid var(--s-border);border-radius:12px;background:var(--s-card);min-width:210px;flex:1 1 210px;max-width:300px;transition:border-color .2s ease,box-shadow .2s ease}
+.cap-search:focus-within{border-color:var(--s-accent);box-shadow:0 0 0 4px var(--s-glow)}
+.cap-search svg{width:15px;height:15px;color:var(--s-faint)}
+.cap-search input{flex:1;min-width:0;border:0;outline:0;background:transparent;color:var(--s-text);font:inherit;font-size:13px}
+.cap-search input::placeholder{color:var(--s-faint)}
+.cap-search input::-webkit-search-cancel-button{filter:invert(.6)}
+
+.cap-favtoggle{display:inline-flex;align-items:center;gap:7px;height:42px;padding:0 14px;border:1px solid var(--s-border);border-radius:12px;background:var(--s-card);color:var(--s-dim);font-size:12.5px;font-weight:700;cursor:pointer;transition:color .2s ease,border-color .2s ease,background-color .2s ease}
+.cap-favtoggle:hover{color:var(--s-text);border-color:var(--s-border2)}
+.cap-favtoggle[aria-pressed="true"]{color:var(--s-warn-ink);border-color:color-mix(in srgb,var(--s-warn) 45%,var(--s-border));background:var(--s-warn-soft)}
+.cap-favtoggle svg{width:14px;height:14px}
+
+.cap-count{margin-left:auto;font-size:12px;color:var(--s-faint);font-variant-numeric:tabular-nums}
+
+/* gallery ------------------------------------------------------------- */
+.cap-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:22px}
+@media (max-width:1080px){.cap-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:760px){.cap-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}}
+
+.cap-card{position:relative;display:flex;flex-direction:column;gap:9px;padding:8px 8px 10px;border:1px solid var(--s-border);border-radius:15px;background:var(--s-card);cursor:pointer;transition:transform .3s cubic-bezier(.2,.7,.2,1),border-color .25s ease,box-shadow .25s ease;content-visibility:auto;contain-intrinsic-size:220px 210px}
+.cap-open{position:absolute;inset:0;z-index:6;padding:0;border:0;border-radius:15px;background:transparent;cursor:pointer}
+.cap-open:focus-visible{outline:2px solid var(--s-accent2);outline-offset:2px}
+.cap-card:hover{transform:translateY(-3px);border-color:var(--s-border2);box-shadow:var(--s-shadow)}
+.cap-card[aria-pressed="true"]{border-color:var(--s-accent);box-shadow:0 0 0 1px var(--s-accent),0 20px 40px -28px var(--s-glow)}
+.cap-card .cap-meta{position:relative;z-index:7;display:flex;align-items:flex-start;gap:8px;padding:0 3px}
+.cap-card .cap-meta b{display:block;font-size:12.5px;line-height:1.25;font-weight:700;letter-spacing:-.01em}
+.cap-card .cap-meta small{display:block;margin-top:2px;font-size:10.5px;line-height:1.3;color:var(--s-faint)}
+.cap-star{margin-left:auto;flex:none;width:26px;height:26px;border:1px solid transparent;border-radius:8px;background:transparent;color:var(--s-faint);display:grid;place-items:center;cursor:pointer;transition:color .2s ease,background-color .2s ease,transform .2s ease}
+.cap-star svg{width:13px;height:13px}
+.cap-star:hover{color:var(--s-warn-ink);background:var(--s-warn-soft)}
+.cap-star[aria-pressed="true"]{color:var(--s-warn-ink)}
+.cap-star:active{transform:scale(.88)}
+
+/* the little video frame ---------------------------------------------- */
+.cap-stage{position:relative;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:#08070D;isolation:isolate;container-type:inline-size;--c-text:#fff;--c-hi:#FDE047;--c-stroke:#fff;--dur:2.4s;--stagger:.15s;--int:1;--sw:1.6px;--box:transparent}
+.cap-stage .cap-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:saturate(.55) brightness(.52) blur(.4px);transform:scale(1.06);opacity:.9;pointer-events:none}
+.cap-stage .cap-shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,7,13,.24),rgba(8,7,13,.06) 40%,rgba(8,7,13,.62));pointer-events:none}
+.cap-stage .cap-grid-tex{position:absolute;inset:0;opacity:.14;background-image:linear-gradient(rgba(255,255,255,.35) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.35) 1px,transparent 1px);background-size:24px 24px;mask-image:radial-gradient(circle at 50% 50%,#000,transparent 78%);pointer-events:none}
+.cap-stage .cap-badge{position:absolute;left:7px;top:7px;z-index:5;display:inline-flex;align-items:center;height:18px;padding:0 6px;border-radius:5px;background:rgba(8,7,13,.58);color:rgba(255,255,255,.7);font-size:8.5px;font-weight:800;letter-spacing:.06em;backdrop-filter:blur(6px)}
+.cap-stage .cap-line-wrap{position:absolute;inset:0;z-index:4;display:flex;align-items:center;justify-content:center;padding:9% 8%;text-align:center}
+.cap-stage .cap-line{position:relative;display:flex;flex-wrap:wrap;align-items:baseline;justify-content:center;gap:.08em .16em;max-width:100%;color:var(--c-text);font-family:var(--ff,"Satoshi",system-ui,sans-serif);font-weight:var(--fw,800);line-height:1.04;letter-spacing:var(--ls,0);text-transform:var(--tt,none);font-size:clamp(11px,7.4cqi,25px);text-shadow:var(--ts,none);-webkit-text-stroke:0 transparent}
+.cap-stage.fx-outline .cap-line{-webkit-text-stroke-width:clamp(.5px,.055em,1.5px)}
+.cap-stage .w{display:inline-block;transform-origin:50% 78%;will-change:transform,opacity}
+.cap-stage .l{display:inline-block;transform-origin:50% 80%}
+.cap-line.grouped{flex-direction:column;flex-wrap:nowrap;align-items:center;gap:.06em}
+.cap-row{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:center;gap:.08em .16em;max-width:100%}
+.cap-line.has-box{background:var(--box,transparent);padding:var(--pad,0);border-radius:var(--radius,10px);box-shadow:var(--boxshadow,none)}
+
+/* static looks (also the state you see after the animation stops) ----- */
+.fx-outline .cap-line{color:transparent;-webkit-text-stroke:var(--sw,1.6px) var(--c-stroke);text-shadow:none}
+.fx-neon .cap-line{color:#fff;text-shadow:0 0 calc(5px * var(--int)) var(--c-hi),0 0 calc(18px * var(--int)) color-mix(in srgb,var(--c-hi) 60%,transparent)}
+.fx-gradient .w{background:linear-gradient(92deg,var(--c-hi),#67E8F9,var(--c-hi));background-size:220% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
+.fx-comic .cap-line{text-shadow:calc(2px + var(--int) * 2px) calc(2px + var(--int) * 2px) 0 #0B0713,0 0 calc(10px * var(--int)) rgba(0,0,0,.5)}
+.fx-depth .cap-line{color:var(--c-text);text-shadow:1px 1px 0 #2E1065,2px 2px 0 #2E1065,3px 3px 0 #2E1065,5px 5px 0 rgba(0,0,0,.45)}
+.fx-vhs .cap-stage-scan,.cap-stage .cap-scan{position:absolute;inset:0;z-index:3;pointer-events:none;opacity:.16;background:repeating-linear-gradient(180deg,transparent 0 2px,rgba(255,255,255,.5) 2px 3px);mix-blend-mode:overlay}
+.fx-ticker .cap-line{flex-wrap:nowrap;white-space:nowrap;justify-content:flex-start;width:max-content}
+.fx-oneword .w{opacity:0}
+.fx-oneword:not(.running) .w:first-child{opacity:1}
+.fx-stack .cap-line{flex-direction:column;align-items:center;gap:.06em}
+.fx-sunset .w{background:linear-gradient(180deg,#FDE68A,#FB7185 55%,#A855F7);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
+.fx-emoji .emo{display:inline-block;margin-left:.12em;font-size:.92em;transform-origin:50% 85%}
+.fx-underline .cap-ul{position:absolute;left:6%;right:6%;bottom:-.12em;height:.22em;width:88%;overflow:visible;pointer-events:none}
+.fx-underline .cap-ul path{fill:none;stroke:var(--c-hi);stroke-width:2.4;stroke-linecap:round;stroke-dasharray:200;stroke-dashoffset:0}
+
+/* ---------------------------------------------------------- animations */
+/* 1. word highlight (rolling karaoke colour) */
+.running.fx-highlight .w,.running.fx-highlight .w{animation:capHl var(--dur) linear infinite;animation-delay:calc(var(--i) * var(--stagger))}
+@keyframes capHl{
+  0%,15%{color:var(--c-hi);opacity:1;transform:translateY(-.08em) scale(calc(1 + .07 * var(--int)))}
+  16%,100%{color:var(--c-text);opacity:.62;transform:none}
+}
+
+/* 2. progressive karaoke fill per word */
+.running.fx-karaoke .w{animation:capKaraoke var(--dur) linear infinite;animation-delay:calc(var(--i) * var(--stagger))}
+@keyframes capKaraoke{
+  0%{background-position:100% 0}
+  55%,100%{background-position:0 0}
+}
+.fx-karaoke .w{background:linear-gradient(90deg,var(--c-hi) 0 50%,var(--c-text) 50% 100%);background-size:220% 100%;background-position:100% 0;-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
+
+/* 3. pill / box behind the active word */
+.fx-pill .w{padding:.02em .2em;border-radius:.24em;transition:background-color .12s linear,color .12s linear}
+.running.fx-pill .w{animation:capPill var(--dur) linear infinite;animation-delay:calc(var(--i) * var(--stagger))}
+@keyframes capPill{
+  0%,14%{background:var(--c-hi);color:#0B0713;transform:scale(calc(1 + .05 * var(--int)))}
+  15%,100%{background:transparent;color:var(--c-text)}
+}
+
+/* 4. outline to fill */
+.running.fx-outline .w{animation:capOutline var(--dur) linear infinite;animation-delay:calc(var(--i) * var(--stagger))}
+@keyframes capOutline{
+  0%{color:transparent;-webkit-text-stroke:var(--sw) var(--c-stroke)}
+  45%,100%{color:var(--c-hi);-webkit-text-stroke:var(--sw) var(--c-stroke)}
+}
+
+/* 5. neon glow pulse */
+.running.fx-neon .w{animation:capNeon var(--dur) ease-in-out infinite;animation-delay:calc(var(--i) * var(--stagger))}
+@keyframes capNeon{
+  0%,100%{opacity:.66;text-shadow:0 0 calc(4px * var(--int)) var(--c-hi)}
+  50%{opacity:1;text-shadow:0 0 calc(8px * var(--int)) var(--c-hi),0 0 calc(26px * var(--int)) color-mix(in srgb,var(--c-hi) 70%,transparent)}
+}
+
+/* 6. animated gradient text */
+.running.fx-gradient .w{animation:capGradient var(--dur) linear infinite;animation-delay:calc(var(--i) * .05s)}
+@keyframes capGradient{to{background-position:220% 0}}
+
+/* 7. minimal fade-up (per word) */
+.running.fx-minimal .w{opacity:0;animation:capFadeUp calc(var(--dur) * .55) cubic-bezier(.2,.7,.2,1) infinite;animation-delay:calc(var(--i) * var(--stagger))}
+@keyframes capFadeUp{
+  0%{opacity:0;transform:translateY(.5em)}
+  35%,80%{opacity:1;transform:none}
+  100%{opacity:0;transform:translateY(-.28em)}
+}
+
+/* 8. typewriter + caret */
+.fx-typewriter .cap-line::after{content:"";display:inline-block;width:.07em;height:.92em;margin-left:.08em;background:var(--c-hi);opacity:0}
+.running.fx-typewriter .cap-line::after{animation:capCaret .8s steps(1) infinite}
+.running.fx-typewriter .w{opacity:0;animation:capType .28s steps(1) forwards;animation-delay:calc(var(--i) * .2s)}
+@keyframes capType{from{opacity:0;clip-path:inset(0 100% 0 0)}to{opacity:1;clip-path:inset(0 0 0 0)}}
+@keyframes capCaret{50%{opacity:1}}
+
+/* 9. cinematic: letter-spacing opens, text settles */
+.running.fx-cinema .w{animation:capCinema calc(var(--dur) * 1.2) cubic-bezier(.2,.7,.2,1) infinite}
+@keyframes capCinema{
+  0%{opacity:0;letter-spacing:.55em;filter:blur(calc(4px * var(--int)))}
+  40%,80%{opacity:1;letter-spacing:var(--ls,0);filter:none}
+  100%{opacity:0}
+}
+
+/* 10. comic bounce with hard shadow */
+.running.fx-comic .w{animation:capComic var(--dur) cubic-bezier(.2,.7,.2,1) infinite;animation-delay:calc(var(--i) * var(--stagger))}
+@keyframes capComic{
+  0%{opacity:0;transform:scale(.4) rotate(-5deg)}
+  18%{opacity:1;transform:scale(1.14) rotate(1deg)}
+  26%,78%{opacity:1;transform:none}
+  100%{opacity:0;transform:translateY(-.4em)}
+}
+
+/* 11. VHS flicker + jitter */
+.running.fx-vhs .cap-line{animation:capVhs .45s steps(2) infinite}
+@keyframes capVhs{
+  0%,100%{transform:translateX(0);opacity:1}
+  20%{transform:translateX(-1.2px);opacity:.84}
+  40%{transform:translateX(1.4px);opacity:.96}
+  60%{transform:translateX(-.6px);opacity:.78}
+  80%{transform:translateX(.8px);opacity:1}
+}
+
+/* 12. RGB glitch split */
+.running.fx-glitch .w{animation:capGlitch 1.1s steps(2) infinite;animation-delay:calc(var(--i) * .12s)}
+@keyframes capGlitch{
+  0%,100%{transform:none;text-shadow:.05em 0 #22D3EE,-.05em 0 #F43F5E}
+  20%{transform:translate(-.03em,.02em);text-shadow:.08em 0 #22D3EE,-.08em 0 #F43F5E}
+  40%{transform:translate(.03em,-.02em);text-shadow:.04em 0 #F43F5E,-.04em 0 #22D3EE}
+  60%{transform:translate(-.02em,0);clip-path:inset(12% 0 34% 0)}
+  80%{transform:translate(.02em,0);clip-path:inset(52% 0 8% 0)}
+}
+
+/* 13. handwritten / script settle */
+.running.fx-ink .w{opacity:0;animation:capInk calc(var(--dur) * .8) cubic-bezier(.2,.8,.2,1) infinite;animation-delay:calc(var(--i) * .14s)}
+@keyframes capInk{0%{opacity:0;transform:rotate(-4deg) translateY(.2em) scale(.94)}30%,85%{opacity:1;transform:none}100%{opacity:0}}
+
+/* 14. news ticker */
+.running.fx-ticker .cap-line{animation:capTicker var(--dur) linear infinite}
+@keyframes capTicker{from{transform:translateX(18%)}to{transform:translateX(-58%)}}
+
+/* 15. emoji pop-in */
+.running.fx-emoji .emo{animation:capEmoji var(--dur) cubic-bezier(.2,1.4,.3,1) infinite;animation-delay:calc(var(--i) * var(--stagger) + .15s)}
+@keyframes capEmoji{0%{opacity:0;transform:scale(.2) rotate(-18deg)}22%{opacity:1;transform:scale(1.18) rotate(4deg)}34%,82%{opacity:1;transform:none}100%{opacity:0;transform:translateY(-.3em)}}
+
+/* 16. multi-colour per word */
+.fx-multicolor .w:nth-child(4n+1){color:#FDE047}
+.fx-multicolor .w:nth-child(4n+2){color:#67E8F9}
+.fx-multicolor .w:nth-child(4n+3){color:#F0ABFC}
+.fx-multicolor .w:nth-child(4n+4){color:#86EFAC}
+.running.fx-multicolor .w{animation:capConfetti var(--dur) cubic-bezier(.2,.8,.2,1) infinite;animation-delay:calc(var(--i) * .1s)}
+@keyframes capConfetti{0%{opacity:0;transform:translateY(-.4em) scale(.7) rotate(-6deg)}25%{opacity:1;transform:none}80%{opacity:1}100%{opacity:0}}
+
+/* 17. underline draw (SVG dash offset) */
+.running.fx-underline .cap-ul path{animation:capDraw var(--dur) linear infinite;animation-delay:calc(var(--i) * var(--stagger))}
+@keyframes capDraw{0%{stroke-dashoffset:200}45%,100%{stroke-dashoffset:0}}
+
+/* 18. 3D extruded depth */
+.running.fx-depth .w{animation:capDepth var(--dur) cubic-bezier(.2,.8,.2,1) infinite;animation-delay:calc(var(--i) * .1s)}
+@keyframes capDepth{0%{opacity:0;transform:perspective(400px) rotateX(32deg) translateY(.2em)}30%,80%{opacity:1;transform:none}100%{opacity:0}}
+
+/* 19. one word at a time, big centre */
+.running.fx-oneword .w{animation:capOneWord var(--dur) steps(1) infinite;animation-delay:calc(var(--i) * var(--stagger))}
+@keyframes capOneWord{0%,18%{opacity:1;transform:scale(1.06)}19%,100%{opacity:0;transform:none}}
+
+/* 20. blur to sharp */
+.running.fx-blur .w{animation:capBlur calc(var(--dur) * .8) cubic-bezier(.2,.7,.2,1) infinite;animation-delay:calc(var(--i) * .12s)}
+@keyframes capBlur{0%{opacity:0;filter:blur(calc(10px * var(--int)));transform:scale(1.06)}35%,82%{opacity:1;filter:none;transform:none}100%{opacity:0}}
+
+/* 21. 3D flip in */
+.running.fx-flip .w{animation:capFlip calc(var(--dur) * .75) cubic-bezier(.2,.8,.2,1) infinite;animation-delay:calc(var(--i) * .13s)}
+@keyframes capFlip{0%{opacity:0;transform:rotateX(-94deg)}35%,82%{opacity:1;transform:none}100%{opacity:0;transform:rotateX(60deg)}}
+
+/* 22. elastic bounce */
+.running.fx-elastic .w{animation:capElastic calc(var(--dur) * .9) cubic-bezier(.2,.8,.2,1) infinite;animation-delay:calc(var(--i) * .11s)}
+@keyframes capElastic{
+  0%{opacity:0;transform:scale(.2)}
+  30%{opacity:1;transform:scale(1.22)}
+  45%{transform:scale(.92)}
+  60%,85%{transform:scale(1)}
+  100%{opacity:0;transform:scale(.9)}
+}
+
+/* 23. letter stagger wave */
+.running.fx-wave .l{animation:capWave calc(var(--dur) * .9) ease-in-out infinite;animation-delay:calc(var(--i) * .035s)}
+@keyframes capWave{0%,100%{transform:translateY(0)}30%{transform:translateY(calc(-.2em * var(--int)))}60%{transform:translateY(calc(.08em * var(--int)))}}
+
+/* 24. spotlight / shine sweep */
+.running.fx-shine .cap-line{background:linear-gradient(100deg,var(--c-text) 35%,#fff 48%,var(--c-hi) 52%,var(--c-text) 65%);background-size:260% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;animation:capShine var(--dur) linear infinite}
+@keyframes capShine{from{background-position:120% 0}to{background-position:-120% 0}}
+
+/* 25. slide-in stack */
+.running.fx-stack .w{opacity:0;animation:capStack calc(var(--dur) * .7) cubic-bezier(.2,.7,.2,1) infinite;animation-delay:calc(var(--i) * .13s)}
+@keyframes capStack{0%{opacity:0;transform:translateY(.7em)}35%,82%{opacity:1;transform:none}100%{opacity:0;transform:translateY(-.4em)}}
+
+/* 26. retro sunset gradient flicker */
+.running.fx-sunset .w{animation:capSunset calc(var(--dur) * .8) steps(2) infinite;animation-delay:calc(var(--i) * .08s)}
+@keyframes capSunset{0%,100%{opacity:.7;filter:saturate(1)}35%{opacity:1;filter:saturate(1.35) brightness(1.08)}70%{opacity:.55;filter:saturate(.8)}}
+
+/* 27. impact shake on keywords */
+.running.fx-impact .w{animation:capImpact calc(var(--dur) * .9) cubic-bezier(.2,.8,.2,1) infinite;animation-delay:calc(var(--i) * .12s)}
+@keyframes capImpact{
+  0%{opacity:0;transform:scale(1.5)}
+  22%{opacity:1;transform:scale(1) translateX(-.05em)}
+  30%{transform:translateX(.05em)}
+  38%{transform:translateX(-.03em)}
+  46%,85%{transform:none;opacity:1}
+  100%{opacity:0}
+}
+
+/* 28. slide-in per word */
+.running.fx-slide .w{opacity:0;animation:capSlide calc(var(--dur) * .8) cubic-bezier(.2,.7,.2,1) infinite;animation-delay:calc(var(--i) * .12s)}
+@keyframes capSlide{0%{opacity:0;transform:translateX(-.55em)}30%,82%{opacity:1;transform:none}100%{opacity:0;transform:translateX(.4em)}}
+
+/* pause every preview that has scrolled away ------------------------- */
+.cap-card:not(.in-view) .cap-stage *{animation-play-state:paused!important}
+
+/* ------------------------------------------------------- live preview */
+.cap-studio{display:grid;grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr);gap:26px;margin-top:44px;padding:20px;border:1px solid var(--s-border);border-radius:22px;background:linear-gradient(180deg,var(--s-card),color-mix(in srgb,var(--s-card) 88%,var(--s-bg)));box-shadow:var(--s-shadow)}
+@media (max-width:960px){.cap-studio{grid-template-columns:1fr;gap:22px}}
+
+.cap-live{display:flex;flex-direction:column;gap:14px;min-width:0}
+.cap-stage-big{position:relative;display:flex;justify-content:center;padding:18px;border:1px solid var(--s-border);border-radius:18px;background:radial-gradient(circle at 50% 20%,rgba(139,92,246,.16),transparent 65%),var(--s-soft);min-height:330px}
+.cap-frame{position:relative;width:min(100%,300px);aspect-ratio:9/16;border-radius:15px;overflow:hidden;background:#08070D;isolation:isolate;container-type:inline-size;box-shadow:0 24px 50px -24px rgba(0,0,0,.9),0 0 0 1px rgba(255,255,255,.08)}
+.cap-frame[data-ratio="16x9"]{width:100%;max-width:520px;aspect-ratio:16/9;border-radius:13px}
+.cap-frame .cap-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:saturate(.62) brightness(.5) blur(.6px);transform:scale(1.05)}
+.cap-frame .cap-shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,7,13,.2),rgba(8,7,13,.05) 38%,rgba(8,7,13,.7))}
+.cap-frame .cap-line-wrap{position:absolute;inset:0;z-index:4;display:flex;padding:9% 8%}
+.cap-frame .cap-line{position:relative;display:flex;flex-wrap:wrap;align-items:baseline;justify-content:center;gap:.08em .18em;width:100%;color:var(--c-text);font-family:var(--ff,"Satoshi"),system-ui,sans-serif;font-weight:var(--fw,800);line-height:1.05;letter-spacing:var(--ls,0);text-transform:var(--tt,none);font-size:min(calc(var(--fs,48) * 1px),15cqi);text-shadow:var(--ts,none)}
+.cap-frame .w,.cap-frame .l{display:inline-block;transform-origin:50% 78%}
+
+/* position and alignment */
+.cap-frame[data-pos="top"] .cap-line-wrap{align-items:flex-start}
+.cap-frame[data-pos="middle"] .cap-line-wrap{align-items:center}
+.cap-frame[data-pos="bottom"] .cap-line-wrap{align-items:flex-end}
+.cap-frame[data-align="left"] .cap-line{justify-content:flex-start;text-align:left}
+.cap-frame[data-align="center"] .cap-line{justify-content:center;text-align:center}
+.cap-frame[data-align="right"] .cap-line{justify-content:flex-end;text-align:right}
+
+/* fill the frame's look with the preset colours */
+.cap-frame.fx-outline .cap-line{color:transparent;-webkit-text-stroke:var(--sw,1.6px) var(--c-stroke)}
+.cap-frame .cap-box{background:var(--box,transparent);border-radius:var(--radius,10px);padding:var(--pad,0);box-shadow:var(--boxshadow,none)}
+
+.cap-live-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.cap-ratio{display:inline-flex;padding:3px;border:1px solid var(--s-border);border-radius:10px;background:var(--s-card)}
+.cap-ratio button{height:28px;padding:0 10px;border:0;border-radius:7px;background:transparent;color:var(--s-dim);font-size:11.5px;font-weight:700;cursor:pointer}
+.cap-ratio button.on{background:var(--s-soft);color:var(--s-text)}
+.cap-live-bar .lx-btn{height:34px;padding:0 13px;font-size:12px;border-radius:9px}
+.cap-live-bar .cap-apply{margin-left:auto}
+
+.cap-textfield{display:flex;flex-direction:column;gap:5px}
+.cap-textfield span{font-size:10.5px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--s-faint)}
+.cap-textfield input{height:36px;padding:0 11px;border:1px solid var(--s-border);border-radius:9px;background:var(--s-input);color:var(--s-text);font:inherit;font-size:12.5px}
+.cap-textfield input:focus{outline:0;border-color:var(--s-accent);box-shadow:0 0 0 3px var(--s-glow)}
+
+.cap-controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 14px;align-content:start}
+@media (max-width:520px){.cap-controls{grid-template-columns:1fr}}
+.cap-field{display:flex;flex-direction:column;gap:5px;min-width:0}
+.cap-field>span,.cap-field>label{font-size:10px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--s-faint);display:flex;align-items:center;justify-content:space-between;gap:8px}
+.cap-field>span b,.cap-field>label b{color:var(--s-dim);font-weight:700;letter-spacing:0;text-transform:none;font-size:11px;font-variant-numeric:tabular-nums}
+.cap-field select,.cap-field input[type="text"]{width:100%;height:34px;padding:0 9px;border:1px solid var(--s-border);border-radius:8px;background:var(--s-input);color:var(--s-text);font:inherit;font-size:12px;outline:0}
+.cap-field select:focus,.cap-field input[type="text"]:focus{border-color:var(--s-accent);box-shadow:0 0 0 3px var(--s-glow)}
+.cap-field input[type="range"]{-webkit-appearance:none;appearance:none;width:100%;height:22px;background:transparent;cursor:pointer}
+.cap-field input[type="range"]::-webkit-slider-runnable-track{height:3px;border-radius:3px;background:linear-gradient(90deg,var(--s-accent),var(--s-accent2))}
+.cap-field input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;margin-top:-5px;border-radius:50%;background:var(--s-text);border:0;box-shadow:0 0 0 3px var(--s-glow)}
+.cap-field input[type="range"]::-moz-range-track{height:3px;border-radius:3px;background:var(--s-accent)}
+.cap-field input[type="range"]::-moz-range-thumb{width:12px;height:12px;border:0;border-radius:50%;background:var(--s-text)}
+.cap-colorrow{display:flex;align-items:center;gap:7px}
+.cap-colorrow input[type="color"]{width:36px;height:30px;padding:0;border:1px solid var(--s-border);border-radius:8px;background:var(--s-input);cursor:pointer}
+.cap-colorrow code{font-size:10.5px;color:var(--s-faint);letter-spacing:.02em}
+.cap-check{display:flex;align-items:center;gap:8px;height:34px;font-size:12px;color:var(--s-dim);cursor:pointer}
+.cap-check label{color:inherit;font-size:12px;letter-spacing:0;text-transform:none;cursor:pointer}
+.cap-check input{width:15px;height:15px;accent-color:var(--s-accent)}
+.cap-subhead{grid-column:1/-1;display:flex;align-items:center;gap:8px;margin-top:2px;font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--s-faint)}
+.cap-subhead::after{content:"";flex:1;height:1px;background:var(--s-border)}
+
+/* font picker --------------------------------------------------------- */
+.cap-fontwrap{position:relative}
+.cap-fontbtn{display:flex;align-items:center;gap:8px;width:100%;height:36px;padding:0 10px;border:1px solid var(--s-border);border-radius:9px;background:var(--s-input);color:var(--s-text);font-size:13px;cursor:pointer;text-align:left}
+.cap-fontbtn:hover{border-color:var(--s-border2)}
+.cap-fontbtn .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left}
+.cap-fontbtn svg{width:12px;height:12px;color:var(--s-faint);transition:transform .2s ease}
+.cap-fontbtn[aria-expanded="true"] svg{transform:rotate(180deg)}
+.cap-fontlist{position:absolute;left:0;right:0;top:calc(100% + 6px);z-index:30;max-height:290px;overflow:auto;padding:6px;border:1px solid var(--s-border2);border-radius:12px;background:var(--s-card);box-shadow:var(--s-shadow-lg)}
+.cap-fontlist[hidden]{display:none}
+.cap-fontgroup{padding:6px 8px 3px;font-size:9.5px;font-weight:800;letter-spacing:.11em;text-transform:uppercase;color:var(--s-faint)}
+.cap-font{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;padding:6px 8px;border:0;border-radius:7px;background:transparent;color:var(--s-text);font-size:14px;cursor:pointer;text-align:left}
+.cap-font:hover,.cap-font:focus-visible{background:var(--s-soft)}
+.cap-font small{font-family:"Satoshi",sans-serif;font-size:10px;color:var(--s-faint);letter-spacing:.04em;text-transform:uppercase}
+.cap-font[aria-pressed="true"]{background:var(--s-soft);box-shadow:inset 0 0 0 1px var(--s-accent)}
+
+/* applied style JSON -------------------------------------------------- */
+.cap-json{margin-top:12px;border-top:1px solid var(--s-border);padding-top:12px}
+.cap-json summary{cursor:pointer;font-size:11.5px;font-weight:700;color:var(--s-dim);list-style:none;display:flex;align-items:center;gap:6px}
+.cap-json summary::-webkit-details-marker{display:none}
+.cap-json summary::before{content:"{ }";font-family:ui-monospace,monospace;font-size:10px;color:var(--s-accent2)}
+.cap-json pre{margin:9px 0 0;padding:10px 12px;max-height:170px;overflow:auto;border:1px solid var(--s-border);border-radius:9px;background:var(--s-input);color:var(--s-dim);font:11px/1.55 ui-monospace,"JetBrains Mono",monospace;white-space:pre-wrap;word-break:break-word}
+
+/* toast --------------------------------------------------------------- */
+.cap-toast{position:fixed;right:22px;bottom:22px;z-index:90;display:flex;align-items:center;gap:10px;max-width:340px;padding:12px 14px;border:1px solid color-mix(in srgb,var(--s-good) 45%,var(--s-border));border-radius:12px;background:color-mix(in srgb,var(--s-card) 94%,transparent);backdrop-filter:blur(14px);box-shadow:var(--s-shadow-lg);color:var(--s-text);font-size:12.5px;font-weight:600;opacity:0;transform:translateY(14px);pointer-events:none;transition:opacity .25s ease,transform .3s cubic-bezier(.2,.7,.2,1)}
+.cap-toast.on{opacity:1;transform:none}
+.cap-toast svg{width:16px;height:16px;color:var(--s-good);flex:none}
+
+/* empty / no results -------------------------------------------------- */
+.cap-empty{padding:34px 18px;text-align:center;color:var(--s-faint);font-size:13px;border:1px dashed var(--s-border2);border-radius:14px;margin-top:22px}
+.cap-empty b{display:block;color:var(--s-text);font-size:14px;margin-bottom:4px}
+
+/* tiny phones --------------------------------------------------------- */
+@media (max-width:480px){
+  .cap-toolbar{gap:8px}
+  .cap-search{max-width:none;order:3;flex-basis:100%}
+  .cap-count{display:none}
+  .cap-card{padding:6px 6px 8px}
+  .cap-card .cap-meta b{font-size:11.5px}
+  .cap-card .cap-meta small{font-size:9.5px}
+  .cap-star{width:24px;height:24px}
+  .cap-studio{padding:14px;border-radius:18px}
+  .cap-stage-big{padding:12px;min-height:0}
+  .cap-live-bar .cap-apply{margin-left:0;flex:1;justify-content:center}
+}
+
+/* ------------------------------------------------------------ calm mode */
+@media (prefers-reduced-motion:reduce){
+  .cap-card,.cap-card:hover{transform:none}
+  .cap-stage *,.cap-frame *,.cap-toast{animation:none!important;transition:none!important}
+  .fx-oneword .w{opacity:1}
+  .fx-typewriter .w{opacity:1;clip-path:none}
+  .fx-minimal .w,.fx-emoji .emo{opacity:1}
+  .res-dialog[open]{animation:none}
+}

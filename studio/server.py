@@ -445,18 +445,26 @@ def brand(name: str):
 @app.get("/videos/{name}")
 def demo_video(name: str):
     """The example clips shown on the front page. Replace the files in web/videos to use your own."""
-    if not re.fullmatch(r"[\w\-]+\.(mp4|webm|jpg|jpeg|png|webp)", name) or not (WEB / "videos" / name).is_file():
+    if not re.fullmatch(r"[\w\-]+\.(mp4|webm|vtt|jpg|jpeg|png|webp)", name) or not (WEB / "videos" / name).is_file():
         raise HTTPException(404)
-    media = "video/mp4" if name.endswith(".mp4") else ("video/webm" if name.endswith(".webm") else None)
+    if name.endswith(".vtt"):
+        media = "text/vtt"
+    elif name.endswith(".mp4"):
+        media = "video/mp4"
+    elif name.endswith(".webm"):
+        media = "video/webm"
+    else:
+        media = None
     return FileResponse(WEB / "videos" / name, media_type=media,
                         headers={"Cache-Control": "public, max-age=604800, stale-while-revalidate=86400"})
 
 
 @app.get("/assets/{name}")
 def asset(name: str):
-    if not re.fullmatch(r"[\w\-]+\.js", name) or not (WEB / name).is_file():
+    if not re.fullmatch(r"[\w\-]+\.(js|css)", name) or not (WEB / name).is_file():
         raise HTTPException(404)
-    return FileResponse(WEB / name, media_type="text/javascript", headers={"Cache-Control": "public, max-age=86400, stale-while-revalidate=604800"})
+    media = "text/css" if name.endswith(".css") else "text/javascript"
+    return FileResponse(WEB / name, media_type=media, headers={"Cache-Control": "public, max-age=86400, stale-while-revalidate=604800"})
 
 
 @app.get("/favicon.ico")

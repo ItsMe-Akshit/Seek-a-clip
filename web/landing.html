@@ -25,6 +25,7 @@
 <link rel="icon" type="image/svg+xml" href="/brand/favicon.svg">
 <link rel="preload" as="image" href="/brand/clip-2.jpg" fetchpriority="high">
 <link rel="stylesheet" href="/theme.css">
+<link rel="stylesheet" href="/assets/captions.css">
 <script src="/theme.js" defer></script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Seek-a-clip","applicationCategory":"MultimediaApplication","operatingSystem":"Web browser","url":"{{SITE}}/","image":"{{SITE}}/brand/og.jpg","description":"AI clip maker that turns Twitch, Kick and YouTube live streams and videos into captioned vertical clips for YouTube Shorts, Instagram Reels and TikTok.","offers":[{"@type":"Offer","price":"39","priceCurrency":"USD","description":"12 months of Seek-a-clip"},{"@type":"Offer","price":"12","priceCurrency":"USD","description":"One month of Seek-a-clip"}],"featureList":["Records live streams","AI picks the best moments","Word-by-word captions","Vertical 9:16 clips","Twitch, Kick and YouTube","Posts to YouTube Shorts and Instagram Reels"]}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"Seek-a-clip","url":"{{SITE}}/","logo":"{{SITE}}/brand/logo.svg"}</script>
@@ -436,11 +437,12 @@ details[open] .ans{animation:ansIn .45s cubic-bezier(.2,.7,.2,1) both}
 .res-video .res-veil{position:absolute;inset:0;z-index:2;pointer-events:none;background:linear-gradient(180deg,rgba(8,7,13,.28),transparent 26%,transparent 52%,rgba(8,7,13,.86))}
 .res-video::after{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;opacity:0;transition:opacity .35s ease;background:radial-gradient(340px circle at var(--mx) var(--my),rgba(168,85,247,.22),transparent 70%)}
 .res-video:hover::after{opacity:1}
-.res-cap{position:absolute;left:0;right:0;bottom:0;z-index:3;display:flex;flex-direction:column;gap:3px;padding:18px 18px 16px;color:#fff;pointer-events:none}
-.res-cap b{font-family:"Space Grotesk",sans-serif;font-size:15px;line-height:1.25;font-weight:600;letter-spacing:-.015em}
-.res-cap small{font-size:11.5px;line-height:1.4;color:rgba(255,255,255,.66)}
-.res-cap .res-tag{display:inline-flex;align-items:center;gap:6px;align-self:flex-start;height:23px;padding:0 9px;margin-bottom:5px;border-radius:999px;background:rgba(139,92,246,.24);border:1px solid rgba(168,85,247,.35);color:#E9D5FF;font-size:9.5px;font-weight:800;letter-spacing:.09em;text-transform:uppercase}
-.res-cap .res-tag i{width:5px;height:5px;border-radius:50%;background:#D946EF}
+.res-card{margin:0;display:flex;flex-direction:column;gap:10px;min-width:0}
+.res-info{display:flex;flex-direction:column;gap:4px;padding:0 2px}
+.res-info b{font-family:"Space Grotesk",sans-serif;font-size:15px;line-height:1.25;font-weight:600;letter-spacing:-.015em;color:var(--s-text)}
+.res-info small{font-size:12px;line-height:1.45;color:var(--s-dim)}
+.res-info .res-tag{display:inline-flex;align-items:center;gap:6px;align-self:flex-start;height:22px;padding:0 8px;margin-bottom:2px;border-radius:999px;background:var(--s-soft);border:1px solid var(--s-border2);color:var(--s-deep);font-size:9.5px;font-weight:800;letter-spacing:.09em;text-transform:uppercase}
+.res-info .res-tag i{width:5px;height:5px;border-radius:50%;background:var(--s-accent2)}
 .res-dur{position:absolute;left:14px;top:14px;z-index:4;display:inline-flex;align-items:center;height:23px;padding:0 8px;border-radius:6px;background:rgba(8,7,13,.62);backdrop-filter:blur(8px);color:#fff;font-size:10px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:.04em;pointer-events:none}
 .res-play{position:absolute;left:50%;top:50%;z-index:4;transform:translate(-50%,-50%);width:58px;height:58px;border-radius:50%;border:1px solid rgba(255,255,255,.3);background:rgba(8,7,13,.52);backdrop-filter:blur(12px);color:#fff;display:grid;place-items:center;cursor:pointer;transition:transform .22s cubic-bezier(.2,.7,.2,1),background-color .22s ease,opacity .22s ease}
 .res-play:hover{background:rgba(139,92,246,.75)}
@@ -456,6 +458,11 @@ details[open] .ans{animation:ansIn .45s cubic-bezier(.2,.7,.2,1) both}
 .res-expand svg{width:15px;height:15px}
 .res-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;max-width:760px;margin:16px auto 0}
 .res-note{text-align:center;color:var(--s-faint);font-size:11.5px;margin-top:18px}
+.res-open{position:absolute;inset:0;z-index:3;padding:0;border:0;border-radius:inherit;background:transparent;cursor:pointer}
+.res-open:focus-visible{outline:2px solid var(--s-accent2);outline-offset:-4px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.cap-current{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--s-faint)}
+.cap-current b{color:var(--s-text);font-weight:700}
 
 /* original -> AI clip comparison */
 .res-compare{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:38px;align-items:center;margin-top:52px}
@@ -557,6 +564,10 @@ details[open] .ans{animation:ansIn .45s cubic-bezier(.2,.7,.2,1) both}
   .strip-in{grid-template-columns:1fr;justify-content:stretch;gap:10px}
   .strip-row{gap:12px}
   .strip-row p{min-width:74px}
+  .res-row{display:flex;max-width:none;overflow-x:auto;scroll-snap-type:x mandatory;gap:12px;padding:2px 2px 10px;margin-inline:-4px;scrollbar-width:none}
+  .res-row::-webkit-scrollbar{display:none}
+  .res-row .res-card{flex:0 0 clamp(148px,44%,230px);scroll-snap-align:center}
+  .res-compare{margin-top:38px}
   .sec{padding:82px 0}
   .sec-head{align-items:flex-start}
   .cell.a,.cell.d{grid-column:span 2}
@@ -908,6 +919,228 @@ details[open] .ans{animation:ansIn .45s cubic-bezier(.2,.7,.2,1) both}
       </div>
     </section>
 
+    <section class="sec res-sec" id="results" aria-labelledby="resultsTitle">
+      <div class="lx-wrap">
+        <div class="sec-head">
+          <div>
+            <span class="lx-kicker lx-reveal">See it in action</span>
+            <h2 class="lx-h2 lx-reveal" id="resultsTitle">Two hours of stream. <em>Four clips, ready to post.</em></h2>
+            <p class="lx-sub lx-reveal">Same source footage, cut and framed three different ways. Hover a card on a desktop, or let it play as it scrolls into view on a phone. Open any clip for the full-size player.</p>
+          </div>
+          <p class="aside lx-reveal">Every clip below was found, cut, reframed and captioned by the pipeline. No timeline, no export queue.</p>
+        </div>
+
+        <div class="res-feature lx-reveal">
+          <figure class="res-card" data-demo-video data-src="/videos/demo-wide.mp4" data-poster="/videos/demo-wide.jpg" data-title="The full moment, wide" data-note="A 16:9 pass of the same spike - the version for YouTube, X and embeds.">
+            <div class="res-video wide">
+            <video muted loop playsinline preload="none" poster="/videos/demo-wide.jpg" aria-hidden="true" tabindex="-1"></video>
+            <img class="poster" src="/videos/demo-wide.jpg" alt="Wide demo clip with the burned-in hook The clutch of the year and the line One more game" width="1280" height="720" loading="lazy" decoding="async">
+            <span class="res-veil" aria-hidden="true"></span>
+            <span class="res-dur">0:06</span>
+            <button class="res-open" type="button"><span class="sr-only">Open the wide 16:9 clip in the player</span></button>
+            <button class="res-play" type="button" aria-label="Play preview" aria-pressed="false">
+              <svg class="i-play" viewBox="0 0 256 256" aria-hidden="true"><path d="M232.07,121.86,88.29,33.94A16,16,0,0,0,64,47.51V208.49a16,16,0,0,0,24.29,13.57l143.78-87.92a16,16,0,0,0,0-27.28Z"/></svg>
+              <svg class="i-pause" viewBox="0 0 256 256" aria-hidden="true"><path d="M216,48H176a16,16,0,0,0-16,16V192a16,16,0,0,0,16,16h40a16,16,0,0,0,16-16V64A16,16,0,0,0,216,48Zm0,144H176V64h40ZM80,48H40A16,16,0,0,0,24,64V192a16,16,0,0,0,16,16H80a16,16,0,0,0,16-16V64A16,16,0,0,0,80,48Zm0,144H40V64H80Z"/></svg>
+            </button>
+            <button class="res-expand" type="button" aria-label="Open the wide clip full size">
+              <svg viewBox="0 0 256 256" aria-hidden="true"><path d="M216,48H176a8,8,0,0,0,0,16h20.69L152,108.69a8,8,0,0,0,11.32,11.32L208,75.31V96a8,8,0,0,0,16,0V56A8,8,0,0,0,216,48ZM103.31,144,48,199.31V184a8,8,0,0,0-16,0v32a8,8,0,0,0,8,8H72a8,8,0,0,0,0-16H56.69L112,152.69A8,8,0,0,0,103.31,144Z"/></svg>
+            </button>
+            </div>
+            <figcaption class="res-info">
+              <span class="res-tag"><i></i>16:9 &middot; featured</span>
+              <b>The full moment, wide</b>
+              <small>The same spike in landscape, with a poster that already reads as a thumbnail.</small>
+            </figcaption>
+          </figure>
+        </div>
+
+        <div class="res-row lx-reveal" role="group" aria-label="Vertical 9:16 clip previews">
+          <figure class="res-card" data-demo-video data-src="/videos/short-1.mp4" data-poster="/videos/short-1.jpg" data-title="The clutch of the year" data-note="Hook up top, payoff in yellow - both placed clear of the platform buttons.">
+            <div class="res-video tall">
+            <video muted loop playsinline preload="none" poster="/videos/short-1.jpg" aria-hidden="true" tabindex="-1"></video>
+            <img class="poster" src="/videos/short-1.jpg" alt="Vertical demo clip with the burned-in hook The clutch of the year and the line One more game" width="720" height="1280" loading="lazy" decoding="async">
+            <span class="res-veil" aria-hidden="true"></span>
+            <span class="res-dur">0:06</span>
+            <button class="res-open" type="button"><span class="sr-only">Open The clutch of the year in the player</span></button>
+            <button class="res-play" type="button" aria-label="Play preview" aria-pressed="false">
+              <svg class="i-play" viewBox="0 0 256 256" aria-hidden="true"><path d="M232.07,121.86,88.29,33.94A16,16,0,0,0,64,47.51V208.49a16,16,0,0,0,24.29,13.57l143.78-87.92a16,16,0,0,0,0-27.28Z"/></svg>
+              <svg class="i-pause" viewBox="0 0 256 256" aria-hidden="true"><path d="M216,48H176a16,16,0,0,0-16,16V192a16,16,0,0,0,16,16h40a16,16,0,0,0,16-16V64A16,16,0,0,0,216,48Zm0,144H176V64h40ZM80,48H40A16,16,0,0,0,24,64V192a16,16,0,0,0,16,16H80a16,16,0,0,0,16-16V64A16,16,0,0,0,80,48Zm0,144H40V64H80Z"/></svg>
+            </button>
+            <button class="res-expand" type="button" aria-label="Open The clutch of the year full size">
+              <svg viewBox="0 0 256 256" aria-hidden="true"><path d="M216,48H176a8,8,0,0,0,0,16h20.69L152,108.69a8,8,0,0,0,11.32,11.32L208,75.31V96a8,8,0,0,0,16,0V56A8,8,0,0,0,216,48ZM103.31,144,48,199.31V184a8,8,0,0,0-16,0v32a8,8,0,0,0,8,8H72a8,8,0,0,0,0-16H56.69L112,152.69A8,8,0,0,0,103.31,144Z"/></svg>
+            </button>
+            </div>
+            <figcaption class="res-info">
+              <span class="res-tag"><i></i>9:16</span>
+              <b>The clutch of the year</b>
+              <small>Hook up top, payoff in yellow, both clear of the platform UI.</small>
+            </figcaption>
+          </figure>
+
+          <figure class="res-card" data-demo-video data-src="/videos/short-2.mp4" data-poster="/videos/short-2.jpg" data-title="Chat lost it" data-note="One reaction beat, cut to 2.7 seconds - short enough to loop without feeling clipped.">
+            <div class="res-video tall">
+            <video muted loop playsinline preload="none" poster="/videos/short-2.jpg" aria-hidden="true" tabindex="-1"></video>
+            <img class="poster" src="/videos/short-2.jpg" alt="Vertical demo clip with the burned-in hook Chat lost it and the line Absolutely insane" width="720" height="1280" loading="lazy" decoding="async">
+            <span class="res-veil" aria-hidden="true"></span>
+            <span class="res-dur">0:03</span>
+            <button class="res-open" type="button"><span class="sr-only">Open Chat lost it in the player</span></button>
+            <button class="res-play" type="button" aria-label="Play preview" aria-pressed="false">
+              <svg class="i-play" viewBox="0 0 256 256" aria-hidden="true"><path d="M232.07,121.86,88.29,33.94A16,16,0,0,0,64,47.51V208.49a16,16,0,0,0,24.29,13.57l143.78-87.92a16,16,0,0,0,0-27.28Z"/></svg>
+              <svg class="i-pause" viewBox="0 0 256 256" aria-hidden="true"><path d="M216,48H176a16,16,0,0,0-16,16V192a16,16,0,0,0,16,16h40a16,16,0,0,0,16-16V64A16,16,0,0,0,216,48Zm0,144H176V64h40ZM80,48H40A16,16,0,0,0,24,64V192a16,16,0,0,0,16,16H80a16,16,0,0,0,16-16V64A16,16,0,0,0,80,48Zm0,144H40V64H80Z"/></svg>
+            </button>
+            <button class="res-expand" type="button" aria-label="Open Chat lost it full size">
+              <svg viewBox="0 0 256 256" aria-hidden="true"><path d="M216,48H176a8,8,0,0,0,0,16h20.69L152,108.69a8,8,0,0,0,11.32,11.32L208,75.31V96a8,8,0,0,0,16,0V56A8,8,0,0,0,216,48ZM103.31,144,48,199.31V184a8,8,0,0,0-16,0v32a8,8,0,0,0,8,8H72a8,8,0,0,0,0-16H56.69L112,152.69A8,8,0,0,0,103.31,144Z"/></svg>
+            </button>
+            </div>
+            <figcaption class="res-info">
+              <span class="res-tag"><i></i>9:16</span>
+              <b>Chat lost it</b>
+              <small>One reaction beat, 2.7 seconds, built to loop.</small>
+            </figcaption>
+          </figure>
+
+          <figure class="res-card" data-demo-video data-src="/videos/short-3.mp4" data-poster="/videos/short-3.jpg" data-title="Clipped at 3am" data-note="The overnight queue: found while you slept, captioned and waiting in the morning.">
+            <div class="res-video tall">
+            <video muted loop playsinline preload="none" poster="/videos/short-3.jpg" aria-hidden="true" tabindex="-1"></video>
+            <img class="poster" src="/videos/short-3.jpg" alt="Vertical demo clip with the burned-in hook Clipped at 3am and the line While you sleep" width="720" height="1280" loading="lazy" decoding="async">
+            <span class="res-veil" aria-hidden="true"></span>
+            <span class="res-dur">0:05</span>
+            <button class="res-open" type="button"><span class="sr-only">Open Clipped at 3am in the player</span></button>
+            <button class="res-play" type="button" aria-label="Play preview" aria-pressed="false">
+              <svg class="i-play" viewBox="0 0 256 256" aria-hidden="true"><path d="M232.07,121.86,88.29,33.94A16,16,0,0,0,64,47.51V208.49a16,16,0,0,0,24.29,13.57l143.78-87.92a16,16,0,0,0,0-27.28Z"/></svg>
+              <svg class="i-pause" viewBox="0 0 256 256" aria-hidden="true"><path d="M216,48H176a16,16,0,0,0-16,16V192a16,16,0,0,0,16,16h40a16,16,0,0,0,16-16V64A16,16,0,0,0,216,48Zm0,144H176V64h40ZM80,48H40A16,16,0,0,0,24,64V192a16,16,0,0,0,16,16H80a16,16,0,0,0,16-16V64A16,16,0,0,0,80,48Zm0,144H40V64H80Z"/></svg>
+            </button>
+            <button class="res-expand" type="button" aria-label="Open Clipped at 3am full size">
+              <svg viewBox="0 0 256 256" aria-hidden="true"><path d="M216,48H176a8,8,0,0,0,0,16h20.69L152,108.69a8,8,0,0,0,11.32,11.32L208,75.31V96a8,8,0,0,0,16,0V56A8,8,0,0,0,216,48ZM103.31,144,48,199.31V184a8,8,0,0,0-16,0v32a8,8,0,0,0,8,8H72a8,8,0,0,0,0-16H56.69L112,152.69A8,8,0,0,0,103.31,144Z"/></svg>
+            </button>
+            </div>
+            <figcaption class="res-info">
+              <span class="res-tag"><i></i>9:16</span>
+              <b>Clipped at 3am</b>
+              <small>The overnight queue: found, captioned, waiting by morning.</small>
+            </figcaption>
+          </figure>
+        </div>
+
+        <p class="res-note lx-reveal">Demo renders, six seconds each. <a href="/signup">Run it on your own stream</a> to get the full-length cut.</p>
+
+        <div class="res-compare lx-reveal">
+          <div class="ba" id="baCompare">
+            <img class="before" src="/videos/frame-a.jpg" alt="The original 16:9 stream frame, flat and uncropped" width="1280" height="720" loading="lazy" decoding="async">
+            <img class="after" src="/videos/frame-b.jpg" alt="The same frame reframed for vertical with the caption already applied" width="1280" height="720" loading="lazy" decoding="async">
+            <span class="ba-tag l">Original</span>
+            <span class="ba-tag r">AI clip</span>
+            <button class="ba-handle" id="baHandle" type="button" role="slider" aria-label="Compare the original frame with the finished clip" aria-valuemin="0" aria-valuemax="100" aria-valuenow="54" aria-valuetext="54 percent AI clip">
+              <svg viewBox="0 0 256 256" aria-hidden="true"><path d="M88,48a8,8,0,0,1,8,8V200a8,8,0,0,1-16,0V56A8,8,0,0,1,88,48Zm80,0a8,8,0,0,0-8,8V200a8,8,0,0,0,16,0V56A8,8,0,0,0,168,48Z"/></svg>
+            </button>
+            <span class="sr-only" id="baLive" role="status" aria-live="polite"></span>
+          </div>
+          <div>
+            <span class="lx-kicker">Before and after</span>
+            <h3>One frame in. <em>A postable clip out.</em></h3>
+            <p>Drag the handle - or focus it and use the arrow keys - to see what the reframe and the caption do to a plain 16:9 frame. The subject stays centred, the dead space goes, and the words land where thumbs are not.</p>
+            <ul class="ba-list">
+              <li><svg viewBox="0 0 256 256" aria-hidden="true"><path d="M232.49,80.49l-128,128a12,12,0,0,1-17,0l-56-56a12,12,0,1,1,17-17L96,183,215.51,63.51a12,12,0,0,1,17,17Z"/></svg>Subject-aware crop, no manual panning</li>
+              <li><svg viewBox="0 0 256 256" aria-hidden="true"><path d="M232.49,80.49l-128,128a12,12,0,0,1-17,0l-56-56a12,12,0,1,1,17-17L96,183,215.51,63.51a12,12,0,0,1,17,17Z"/></svg>Captions sized for a phone, not a monitor</li>
+              <li><svg viewBox="0 0 256 256" aria-hidden="true"><path d="M232.49,80.49l-128,128a12,12,0,0,1-17,0l-56-56a12,12,0,1,1,17-17L96,183,215.51,63.51a12,12,0,0,1,17,17Z"/></svg>Same look on every clip in the batch</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec cap-sec" id="captions" aria-labelledby="captionsTitle">
+      <div class="lx-wrap">
+        <div class="sec-head cap-top">
+          <div>
+            <span class="lx-kicker lx-reveal">Caption and text effects</span>
+            <h2 class="lx-h2 lx-reveal" id="captionsTitle">Twenty-eight caption styles. <em>One click to make them yours.</em></h2>
+            <p class="lx-sub lx-reveal">Karaoke fills, meme outlines, neon glow, typewriter, cinematic lower-thirds. Pick a look, type your line, tune it on the preview, then apply it to the clips in the queue.</p>
+          </div>
+          <p class="aside lx-reveal">Hover or tap any card to see its motion. Your last applied style is remembered in this browser and exposed as JSON for the renderer.</p>
+        </div>
+
+        <div class="cap-toolbar">
+          <div class="cap-tabs" id="capTabs" role="group" aria-label="Filter styles by category"></div>
+          <label class="cap-search" for="capSearch">
+            <svg viewBox="0 0 256 256" aria-hidden="true"><path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"/></svg>
+            <input id="capSearch" type="search" placeholder="Search styles, tags, motion" autocomplete="off">
+          </label>
+          <button class="cap-favtoggle" id="capFavToggle" type="button" aria-pressed="false">
+            <svg viewBox="0 0 256 256" aria-hidden="true"><path d="M234.29,114.85l-45,38.83L203,211.75a16.4,16.4,0,0,1-24.5,17.82L128,198.49,77.47,229.57A16.4,16.4,0,0,1,53,211.75l13.76-58.07-45-38.83A16.46,16.46,0,0,1,31.08,86l59-4.76,22.76-55.08a16.36,16.36,0,0,1,30.27,0l22.75,55.08,59,4.76a16.46,16.46,0,0,1,9.37,28.86Z"/></svg>
+            Saved
+          </button>
+          <span class="cap-count" id="capCount" role="status" aria-live="polite">28 styles</span>
+        </div>
+
+        <div class="cap-grid" id="capGrid" role="group" aria-label="Caption style gallery"></div>
+        <p class="cap-empty" id="capEmpty" hidden><b>No styles match that search.</b>Try a tag like karaoke, neon, retro or typewriter.</p>
+
+        <div class="cap-studio" id="capStudio">
+          <div class="cap-live">
+            <div class="cap-stage-big">
+              <div class="cap-frame" id="capFrame" data-ratio="9x16" data-pos="bottom" data-align="center" role="img" aria-label="Live caption preview">
+                <img class="cap-bg" id="capLiveBg" src="/videos/short-1.jpg" alt="" loading="lazy" decoding="async">
+                <span class="cap-shade" aria-hidden="true"></span>
+                <div class="cap-line-wrap" id="capLiveLine"></div>
+              </div>
+            </div>
+            <p class="cap-current">Now previewing <b id="capSelectedName">Ember Highlight</b></p>
+            <div class="cap-live-bar">
+              <div class="cap-ratio" role="group" aria-label="Preview aspect ratio">
+                <button type="button" data-ratio="9x16" class="on" aria-pressed="true">9:16</button>
+                <button type="button" data-ratio="16x9" aria-pressed="false">16:9</button>
+              </div>
+              <button class="lx-btn" id="capReplay" type="button">Replay</button>
+              <button class="lx-btn" id="capReset" type="button">Reset</button>
+              <button class="lx-btn primary cap-apply" id="capApply" type="button">Apply style</button>
+            </div>
+            <label class="cap-textfield" for="capText"><span>Sample text</span>
+              <input id="capText" type="text" maxlength="80" value="THIS IS THE MOMENT" autocomplete="off">
+            </label>
+            <details class="cap-json" id="capJsonBox">
+              <summary>Applied style JSON</summary>
+              <pre id="capJson">{ }</pre>
+            </details>
+          </div>
+
+          <div class="cap-controls">
+            <div class="cap-field" style="grid-column:1/-1">
+              <span>Font</span>
+              <div class="cap-fontwrap">
+                <button class="cap-fontbtn" id="capFontBtn" type="button" aria-expanded="false" aria-controls="capFontList" data-font="Poppins">
+                  <span class="nm">Poppins</span>
+                  <svg viewBox="0 0 256 256" aria-hidden="true"><path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"/></svg>
+                </button>
+                <div class="cap-fontlist" id="capFontList" hidden></div>
+              </div>
+            </div>
+            <div class="cap-field"><label for="capSize">Size <b id="capSizeVal">48px</b></label><input id="capSize" type="range" min="20" max="96" step="1" value="48"></div>
+            <div class="cap-field"><label for="capWeight">Weight <b id="capWeightVal">800</b></label><input id="capWeight" type="range" min="400" max="900" step="100" value="800"></div>
+            <div class="cap-field"><span>Text colour <b id="capTextHex">#FFFFFF</b></span><div class="cap-colorrow"><input id="capTextColor" type="color" value="#FFFFFF" aria-label="Text colour"><code>fill</code></div></div>
+            <div class="cap-field"><span>Highlight <b id="capHiHex">#FDE047</b></span><div class="cap-colorrow"><input id="capHiColor" type="color" value="#FDE047" aria-label="Highlight colour"><code>active</code></div></div>
+            <div class="cap-field"><span>Stroke colour <b id="capStrokeHex">#FFFFFF</b></span><div class="cap-colorrow"><input id="capStrokeColor" type="color" value="#FFFFFF" aria-label="Stroke colour"><code>outline</code></div></div>
+            <div class="cap-field"><label for="capStroke">Stroke width <b id="capStrokeVal">0.0px</b></label><input id="capStroke" type="range" min="0" max="4" step="0.2" value="0"></div>
+            <div class="cap-field"><label for="capShadow">Shadow / glow</label><select id="capShadow"><option value="none">None</option><option value="soft">Soft drop</option><option value="glow">Glow</option><option value="hard">Hard comic</option></select></div>
+            <div class="cap-field"><span>Backing box</span><div class="cap-check"><input id="capBox" type="checkbox"><label for="capBox">Show plate</label></div></div>
+            <div class="cap-field"><span>Box colour</span><div class="cap-colorrow"><input id="capBoxColor" type="color" value="#111827" aria-label="Box colour"><code>behind text</code></div></div>
+            <div class="cap-field"><label for="capSpacing">Letter spacing <b id="capSpacingVal">0em</b></label><input id="capSpacing" type="range" min="-5" max="40" step="1" value="0"></div>
+            <div class="cap-field"><label for="capSpeed">Speed <b id="capSpeedVal">1.0&times;</b></label><input id="capSpeed" type="range" min="0.5" max="2" step="0.1" value="1"></div>
+            <div class="cap-field"><label for="capIntensity">Intensity <b id="capIntensityVal">100%</b></label><input id="capIntensity" type="range" min="0" max="150" step="5" value="100"></div>
+            <div class="cap-field"><label for="capPosition">Position</label><select id="capPosition"><option value="top">Top</option><option value="middle">Middle</option><option value="bottom" selected>Bottom</option></select></div>
+            <div class="cap-field"><label for="capAlign">Alignment</label><select id="capAlign"><option value="left">Left</option><option value="center" selected>Centre</option><option value="right">Right</option></select></div>
+            <div class="cap-field"><label for="capWpl">Words per line</label><select id="capWpl"><option value="1">1</option><option value="2">2</option><option value="3" selected>3</option><option value="4">4</option><option value="5">5</option></select></div>
+            <label class="cap-check" for="capUpper" style="grid-column:1/-1"><input id="capUpper" type="checkbox"> Uppercase sample text</label>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="cap-toast" id="capToast" role="status" aria-live="polite">
+      <svg viewBox="0 0 256 256" aria-hidden="true"><path d="M232.49,80.49l-128,128a12,12,0,0,1-17,0l-56-56a12,12,0,1,1,17-17L96,183,215.51,63.51a12,12,0,0,1,17,17Z"/></svg>
+      <span id="capToastMsg"></span>
+    </div>
+
     <section class="sec" id="for" style="padding-top:0">
       <div class="lx-wrap">
         <div class="sec-head">
@@ -1041,6 +1274,22 @@ details[open] .ans{animation:ansIn .45s cubic-bezier(.2,.7,.2,1) both}
       <div class="foot-mark" aria-hidden="true"><span>seek-a-clip</span></div>
     </div>
   </footer>
+
+  <dialog class="res-dialog" id="resDialog" aria-labelledby="resDialogTitle">
+    <div class="res-dialog-in">
+      <div class="res-dialog-bar">
+        <b id="resDialogTitle">Preview</b>
+        <button class="res-dialog-close" type="button" aria-label="Close the preview">
+          <svg viewBox="0 0 256 256" aria-hidden="true"><path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66a8,8,0,0,1,11.32-11.32L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"/></svg>
+        </button>
+      </div>
+      <video id="resDialogVideo" controls playsinline preload="metadata" muted></video>
+      <div class="res-dialog-foot">
+        <span id="resDialogNote"></span>
+        <a class="lx-btn primary" href="/signup">Make my first clip</a>
+      </div>
+    </div>
+  </dialog>
 </div>
 
 <script>
@@ -1309,5 +1558,7 @@ fetch("/api/auth/me").then(r => r.json()).then(d => {
   }
 })();
 </script>
+<script src="/assets/showcase.js"></script>
+<script src="/assets/captions.js"></script>
 </body>
 </html>
