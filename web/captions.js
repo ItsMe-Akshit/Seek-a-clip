@@ -232,7 +232,7 @@
   function cardHTML(p) {
     var isFav = favs.indexOf(p.id) >= 0;
     var on = p.id === selectedId;
-    return '<article class="cap-card" data-id="' + p.id + '" aria-pressed="' + on + '">' +
+    return '<article class="cap-card" data-id="' + p.id + '" data-selected="' + on + '">' +
       '<div class="cap-stage fx-' + p.anim + '" aria-hidden="true">' +
         '<img class="cap-bg" src="/videos/short-' + (p.id.charCodeAt(0) % 3 + 1) + '.jpg" alt="" loading="lazy" decoding="async">' +
         '<span class="cap-shade"></span><span class="cap-badge">' + esc(p.cat.split("/")[0]) + '</span>' +
@@ -246,7 +246,7 @@
   }
 
   function setPressed(card, on) {
-    card.setAttribute("aria-pressed", String(on));
+    card.dataset.selected = String(on);
     var open = card.querySelector(".cap-open");
     if (open) open.setAttribute("aria-pressed", String(on));
   }
