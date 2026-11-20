@@ -46,7 +46,15 @@ Seek-a-clip.
 - Obsidian Violet design system with light, dark and system themes.
 - Responsive from 360 px phones to wide desktops.
 - Reduced-motion support, keyboard focus states and visible contrast.
-- Self-hosted fonts (no third-party font requests).
+- Self-hosted UI fonts; the caption studio loads extra families from Google
+  Fonts on demand.
+
+**Landing page**
+- A results section with lazy, muted clip previews and a full-screen player.
+- A before/after comparison you can drag or drive with the arrow keys.
+- A 28-style caption and text-effect studio with a live preview, 20 fonts,
+  favourites and JSON output. See `ANIMATION-NOTES.md` for the motion map,
+  the preset table and how to add styles, fonts, clips and captions.
 
 ## Quick start
 
